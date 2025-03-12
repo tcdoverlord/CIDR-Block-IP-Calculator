@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CIDR Block IP Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f4f4f9;
+            color: #333;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #007BFF;
+        }
+
+        label {
+            display: block;
+            margin: 15px 0 5px;
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        button {
+            margin-top: 15px;
+            width: 100%;
+            padding: 10px;
+            color: #fff;
+            background: #007BFF;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background: #e9f5ff;
+            border-left: 5px solid #007BFF;
+            border-radius: 4px;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>CIDR Block IP Calculator</h1>
+        <form id="ipForm" onsubmit="submitForm(event)">
+            <label for="cidr">Enter CIDR Block (e.g., /16): </label>
+            <input type="number" id="cidr" min="16" max="28" required>
+            <button type="submit">Calculate</button>
+        </form>
+        <div id="result" class="result" style="display: none;"></div>
+    </div>
+
+    <script>
+        function submitForm(event) {
+            event.preventDefault(); // Prevents the page from refreshing
+            calculateIPs(); // Calls the calculation function
+        }
+
+        function calculateIPs() {
+            const cidr = parseInt(document.getElementById('cidr').value);
+            const resultDiv = document.getElementById('result');
+            if (cidr < 16 || cidr > 28) {
+                resultDiv.style.display = 'block';
+                resultDiv.innerHTML = "Please enter a valid CIDR block between /16 and /28.";
+                return;
+            }
+            const totalIPs = Math.pow(2, 32 - cidr);
+            const reservedIPs = 5;
+            const usableIPs = totalIPs - reservedIPs;
+
+            resultDiv.style.display = 'block';
+            resultDiv.innerHTML = `
+                <strong>Total IP addresses for /${cidr}: ${totalIPs}</strong><br>
+                <strong>Reserved IPs: ${reservedIPs}</strong> (includes network address, broadcast address, and others)<br>
+                <strong>Usable IPs: ${usableIPs}</strong><br><br>
+                The calculation is based on the formula: <code>2^(32 - CIDR)</code>.<br>
+                For example, for a CIDR block of /${cidr}:<br>
+                <code>2^(32 - ${cidr}) = ${totalIPs} total IPs</code>.<br>
+                Subtracting the reserved IPs gives us the usable IPs.
+            `;
+        }
+    </script>
+</body>
+</html>
